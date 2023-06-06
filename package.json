@@ -1,0 +1,18 @@
+{
+  "name": "live-code-session",
+  "version": "1.0.0",
+  "description": "a backend for ecom app",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "author": "\"megha\",",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.1.4",
+    "express": "^4.18.2",
+    "mongoose": "^7.2.2"
+  }
+}
