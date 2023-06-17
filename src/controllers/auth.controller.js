@@ -1,4 +1,4 @@
-// signup a new user
+                // signup a new user
 import { json } from "express";
 import user from "../models/user.schema.js"
 
@@ -9,7 +9,6 @@ export const cookieOptions = {
     expires: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
     httpOnly: true
 }
-
 /***********************************************
  * @SIGNUP
  * @route http://localhost:5000/api/auth/signup
