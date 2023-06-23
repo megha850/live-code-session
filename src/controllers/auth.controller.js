@@ -4,6 +4,7 @@ import user from "../models/user.schema.js"
 
 import asyncHandler from "../service/asyncHandler";
 import CustomError from "../utils/CustomError";
+import mailHelper from "../utils/mailHelper.js"
 
 export const cookieOptions = {
     expires: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
@@ -101,5 +102,76 @@ export const getProfile = asyncHandler(async (req, res) => {
     res.status(200).json({
         success: true,
         user
+    })
+})
+
+
+export const forgotPassword = asyncHandler(async (req, res) => {
+    const {email} = req.baby
+    //  No email
+
+    if (user) {
+        throw new CustomError("User not found", 404)
+    }
+
+    const resetToken = user.generateForgotPasswordToken()
+
+    await user.save({vaildatebeforesave: false})
+
+
+    const resetUrl = `${req.protocol}://${req.get("host")}/api/v1/auth/password/reset/${resetToken}`
+
+    const message = `Your password reset token is as follows \n\n ${resetUrl} \n\n if this was not requested by you. please ignore`
+
+    try {
+        // const option ={}
+        await mailHelper({
+            email: user.email,
+            subject: "Password reset mail",
+            message
+        })
+    } catch (error) {
+        user.ForgotPasswordToken = undefined
+        user.ForgotPasswordExpiry = undefined
+
+        await user.save({vaildatebeforesave: false})
+
+        throw new CustomError(error.message || "Email could not be sent", 500)
+
+    }
+})
+
+export const resetPassword =  asyncHandler(async (req, res) => {
+    const {token: resetToken} = req.params
+    const {password, confirmPassword} = req.body
+
+    const resetPasswordToken = crypto
+    .createHash("sha256")
+    .update(forgotToken)
+    .digest("hex")
+
+    const user = await User.findOne({
+        ForgotPasswordToken: resetPasswordToken,
+        ForgotPasswordExpiry: { $gt: Date.now() }
+    })
+
+    if (!user) {
+        throw new CustomError("password reset token in invalid or exoired" , 400)
+    }
+
+    if (password !== confirmPassword) {
+        throw new CustomError("password does not match", 400)
+
+    }
+
+    user.password = password;
+    user.ForgotPasswordToken = undefined
+    user.ForgotPasswordExpiry = undefined
+
+    await user.save()
+
+    res.status(200).json({
+        success: true,
+        user, 
     })
 })

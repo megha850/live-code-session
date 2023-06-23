@@ -4,11 +4,13 @@ import bcrypt from "bcrypt.js"
 import Jwt  from "jsonwebtoken";
 import config from "../config/index.js";
 import crypto from "crypto";
+import { forgotPassword } from "../controllers/auth.controller.js";
 
 const userSchema = mongoose.Schema({
     name: {
         type: String,
-        required: ["true", "Name must be less than 50 chars"]
+        required: ["true", "Name must be less than 50 chars"],
+        maxLength: [50, "Name must be less than 50 chars"]
     },
     email: {
         type: String,
@@ -22,7 +24,8 @@ const userSchema = mongoose.Schema({
     },
     role: {
         type: String,
-        enum: Object.values(AuthRoles)
+        enum: Object.values(AuthRoles),
+        default: AuthRoles.USER
     },
     forgotPasswordToken: String,
     forgotPasswordExpiry: Date
@@ -61,6 +64,8 @@ userSchema.methods = {
 
     // time for token to expire
     this.forgotPasswordExpiry = Date.now() + 20 * 60 * 1000
+
+    return forgotToken
     
     }
 }
