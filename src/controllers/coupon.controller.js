@@ -64,7 +64,7 @@ export const deleteCoupon = asyncHandler(async(req, res) => {
 
     res.status(200).json({
         success: true,
-        message: "Coupon updated",
+        message: "Coupon delete",
         coupon
     })
 
