@@ -49,13 +49,13 @@ export const generateRazorpayOrderId = asyncHandler(async (req, res) => {
         success: true,
         message: "razorpay order id generated successfully",
         order
-    })
+    });
 
     // add order in database and update product stock
 
     export const generateOrder = asyncHandler(async(req, res) => {
-        // 
-        const { transactionId, product, coupon }= req.body
+        // add more fileds
+        const { transactionId, product, coupon } = req.body
     })
 
     // get only my orders
